@@ -18,20 +18,20 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
             configuration = new Configuration
             {
                 KafkaAddresses = args[0],
-                ForecastTopicName = args[1],
-                ActualWeatherTopicName = args[2],
                 AckRequirement = Acks.None,
-                MaxFlushTimeout = 5
+                MaxFlushTimeout = 5,
+                ForecastTopicName = args[3],
+                ActualWeatherTopicName = args[4]
             };
         } else if (args.Length == 5)
         {
             configuration = new Configuration
             {
                 KafkaAddresses = args[0],
-                ForecastTopicName = args[1],
-                ActualWeatherTopicName = args[2],
-                AckRequirement = args[3] == "ack-all" ? Acks.All : args[3] == "ack-leader" ? Acks.Leader : Acks.None,
-                MaxFlushTimeout = double.Parse(args[4])
+                AckRequirement = args[1] == "ack-all" ? Acks.All : args[3] == "ack-leader" ? Acks.Leader : Acks.None,
+                MaxFlushTimeout = double.Parse(args[2]),
+                ForecastTopicName = args[3],
+                ActualWeatherTopicName = args[4]
             };
         }
         else

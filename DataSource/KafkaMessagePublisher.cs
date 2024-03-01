@@ -3,7 +3,7 @@ using Confluent.Kafka;
 
 namespace DataSource;
 
-public class KafkaMessagePublisher : IDisposable, IMessagePublisher
+public class KafkaMessagePublisher : IMessagePublisher
 {
     private IProducer<string, string> producer;
     private readonly Configuration configuration;
@@ -12,10 +12,11 @@ public class KafkaMessagePublisher : IDisposable, IMessagePublisher
     {
         this.configuration = configuration;
 
-        var producerConfig = new ProducerConfig()
+        var producerConfig = new ProducerConfig
         {
             BootstrapServers = configuration.KafkaAddresses,
-            Acks = configuration.AckRequirement
+            Acks = configuration.AckRequirement,
+            Partitioner = Partitioner.ConsistentRandom
         };
         
         producer = new ProducerBuilder<string, string>(producerConfig).Build();
@@ -40,7 +41,7 @@ public class KafkaMessagePublisher : IDisposable, IMessagePublisher
             
             return true;
         }
-        catch (ProduceException<Null, string> e)
+        catch (ProduceException<string, string> e)
         {
             return false;
         }
