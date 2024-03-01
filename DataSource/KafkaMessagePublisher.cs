@@ -22,29 +22,20 @@ public class KafkaMessagePublisher : IMessagePublisher
         producer = new ProducerBuilder<string, string>(producerConfig).Build();
     }
 
-    public async Task<bool> Publish(string topic, string key, string value, IDictionary<string, string> headers)
+    public async Task Publish(string topic, string key, string value, IDictionary<string, string> headers)
     {
-        try
+        Headers msgHeaders = new Headers();
+        foreach (var header in headers)
         {
-            Headers msgHeaders = new Headers();
-            foreach (var header in headers)
-            {
-                msgHeaders.Add(header.Key, Encoding.UTF8.GetBytes(header.Value));
-            }
-            
-            var deliveryResult = await producer.ProduceAsync(topic, new Message<string, string>
-            {
-                Key = key,
-                Headers = msgHeaders,
-                Value = value,
-            });
-            
-            return true;
+            msgHeaders.Add(header.Key, Encoding.UTF8.GetBytes(header.Value));
         }
-        catch (ProduceException<string, string> e)
+            
+        var deliveryResult = await producer.ProduceAsync(topic, new Message<string, string>
         {
-            return false;
-        }
+            Key = key,
+            Headers = msgHeaders,
+            Value = value,
+        });
     }
 
     public void Dispose()

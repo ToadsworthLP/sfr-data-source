@@ -19,20 +19,30 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
             {
                 KafkaAddresses = args[0],
                 AckRequirement = Acks.None,
-                MaxFlushTimeout = 5,
-                ForecastTopicName = args[3],
-                ActualWeatherTopicName = args[4]
+                MaxFlushTimeout = 10.0,
+                RetryInterval = 10.0,
+                ForecastTopicName = args[4],
+                ActualWeatherTopicName = args[5]
             };
-        } else if (args.Length == 5)
+        } else if (args.Length == 6)
         {
-            configuration = new Configuration
+            try
             {
-                KafkaAddresses = args[0],
-                AckRequirement = args[1] == "ack-all" ? Acks.All : args[3] == "ack-leader" ? Acks.Leader : Acks.None,
-                MaxFlushTimeout = double.Parse(args[2]),
-                ForecastTopicName = args[3],
-                ActualWeatherTopicName = args[4]
-            };
+                configuration = new Configuration
+                {
+                    KafkaAddresses = args[0],
+                    AckRequirement =
+                        args[1] == "ack-all" ? Acks.All : args[1] == "ack-leader" ? Acks.Leader : Acks.None,
+                    MaxFlushTimeout = double.Parse(args[2]),
+                    RetryInterval = double.Parse(args[3]),
+                    ForecastTopicName = args[4],
+                    ActualWeatherTopicName = args[5]
+                };
+            }
+            catch (FormatException e)
+            {
+                throw new ArgumentException($"Failed to parse program arguments: {e.Message}.");
+            }
         }
         else
         {
