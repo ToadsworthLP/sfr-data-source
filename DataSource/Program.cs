@@ -21,11 +21,6 @@ class Program
 
         configuration = configurationProvider.GetConfiguration();
 
-        RetryTaskUntilSuccess(() =>
-        {
-            throw new ArgumentException("Test");
-        }, 10).Wait();
-
         IWeatherProvider weatherProvider = new DummyWeatherProvider();
         IMessagePublisher publisher = new KafkaMessagePublisher(configuration);
         using (publisher)
