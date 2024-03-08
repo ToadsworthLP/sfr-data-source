@@ -11,11 +11,45 @@ This will create a Kafka Cluster with 3 brokers with the new KRaft mode therefor
 
 ### 2. Create topics
 
+Go to http://localhost:8080/ui/clusters/local/all-topics
+
 `actual weather` & `forecast`
 
-Set number of partitions, replica & keep duration
+Set number of partitions, replica & keep duration+
 
-### 3. Start DataSource command line app
+### 4. Create Schemas
+
+1. Go to http://localhost:8080/ui/clusters/local/schemas
+2. Click on `Create Schema`
+2. Give the Schema a subject ex: `weather-forecast-day`
+3. Create a Schema in AVRO format ex:
+```JSON
+{
+  "type": "record",
+  "name": "forecastWeatherDay",
+  "doc": "This record contains a weather forecast day",
+  "namespace": "fhtw.sfr",
+  "fields": [
+    {
+      "name": "day",
+      "type": "string",
+      "doc": "Day string in format DD.MM.YYYY"
+    },
+    {
+      "name": "minTemp",
+      "type": "float",
+      "doc": "Minimum temperature of the day in C"
+    },
+    {
+      "name": "maxTemp",
+      "type": "float",
+      "doc": "Maximum temperature of the day in C"
+    }
+  ]
+}
+```
+
+### 5. Start DataSource command line app
 
 Required arguments are in following format
 ```
@@ -28,7 +62,7 @@ localhost:9192,localhost:9292,localhost:9392 ack-none 10 10 forecast actual-weat
 
 The app will send one message to both topics and shutdown.
 
-### 4. Choice of number of brokers, partitions and replica
+## Choice of number of brokers, partitions and replica
 
 We choose to follow the recommendation: https://www.conduktor.io/kafka/kafka-topics-choosing-the-replication-factor-and-partitions-count/ for deciding which setup we want to select.
 
