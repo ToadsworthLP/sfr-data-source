@@ -12,8 +12,8 @@ public class DummyWeatherProvider : IWeatherProvider
         return GetDummyData();
     }
     
-    private string GetDummyData()
+    private static string GetDummyData()
     {
-        return "{temperature: 15.0, rain: true}";
+        return "{\"temperature\": 15.0, \"rain\": true}";
     }
 }

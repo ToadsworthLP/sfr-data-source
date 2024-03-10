@@ -11,13 +11,10 @@ This will create a Kafka Cluster with 3 brokers with the new KRaft mode therefor
 
 ### 2. Create topics
 
-Go to http://localhost:8080/ui/clusters/local/all-topics
+Go to http://localhost:8080/ui/clusters/local/all-topics  
+You can create the needed topics here, however when running DataSource the topics will be created automatically with the intended number of partition, replica and min.insync.replica.
 
-`actual weather` & `forecast`
-
-Set number of partitions, replica & keep duration+
-
-### 4. Create Schemas
+### 3. Create Schemas
 
 1. Go to http://localhost:8080/ui/clusters/local/schemas
 2. Click on `Create Schema`
@@ -49,7 +46,7 @@ Set number of partitions, replica & keep duration+
 }
 ```
 
-### 5. Start DataSource command line app
+### 4. Start DataSource command line app
 
 Required arguments are in following format
 ```
@@ -61,6 +58,9 @@ localhost:9192,localhost:9292,localhost:9392 ack-none 10 10 forecast actual-weat
 ```
 
 The app will send one message to both topics and shutdown.
+
+### 5. Start the DataTransformer command line app
+Listens to the incoming weather data and transforms them into Fareinheit via Kafka Streams
 
 ## Choice of number of brokers, partitions and replica
 

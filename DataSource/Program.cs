@@ -2,8 +2,6 @@
 
 class Program
 {
-    private static Configuration configuration;
-    
     static void Main(string[] args)
     {
         IConfigurationProvider configurationProvider;
@@ -11,7 +9,7 @@ class Program
         {
             configurationProvider = new ConsoleArgumentsConfiguration(args);
         }
-        catch (ArgumentException e)
+        catch (ArgumentException)
         {
             Console.WriteLine("Usage:");
             Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... forecast-topic-name actual-weather-topic-name");
@@ -19,26 +17,26 @@ class Program
             return;
         }
 
-        configuration = configurationProvider.GetConfiguration();
+        var config = configurationProvider.GetConfiguration();
+
+        Task.WaitAll(
+            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ActualWeatherTopicName),
+            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ActualWeatherTopicName + "-fareinheit"),
+            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ForecastTopicName),
+            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ForecastTopicName + "-fareinheit"));
 
         IWeatherProvider weatherProvider = new DummyWeatherProvider();
-        IMessagePublisher publisher = new KafkaMessagePublisher(configuration);
-        using (publisher)
-        {
-            IList<Task> tasks = new List<Task>();
-            
-            tasks.Add(SendWeatherMessage(dateTime => weatherProvider.GetActualWeather(dateTime), publisher, DateTime.Now, configuration.ActualWeatherTopicName, "dummy-provider"));
-            tasks.Add(SendWeatherMessage(dateTime => weatherProvider.GetForecast(dateTime), publisher, DateTime.Now + TimeSpan.FromDays(1), configuration.ForecastTopicName, "dummy-provider"));
-
-            Task.WhenAll(tasks).Wait();
-        }
+        using IMessagePublisher publisher = new KafkaMessagePublisher(config);
+        Task.WaitAll(
+            SendWeatherMessage(weatherProvider.GetActualWeather, publisher, DateTime.Now, config.ActualWeatherTopicName, config.RetryInterval, "dummy-provider"),
+            SendWeatherMessage(weatherProvider.GetForecast, publisher, DateTime.Now + TimeSpan.FromDays(1), config.ForecastTopicName, config.RetryInterval, "dummy-provider"));
     }
 
-    private static async Task SendWeatherMessage(Func<DateTime, Task<string>> providerFunc, IMessagePublisher publisher, DateTime dateTime, string topic, string source)
+    private static async Task SendWeatherMessage(Func<DateTime, Task<string>> providerFunc, IMessagePublisher publisher, DateTime dateTime, string topic, double retryInterval, string source)
     {
-        IDictionary<string, string> headers = new Dictionary<string, string> { { "source", source } };
-        string value = await RetryTaskUntilSuccess(() => providerFunc(dateTime), configuration.RetryInterval);
-        await RetryTaskUntilSuccess(() => publisher.Publish(topic, dateTime.ToString("s"), value, headers), configuration.RetryInterval);
+        var headers = new Dictionary<string, string> { { "source", source } };
+        string value = await RetryTaskUntilSuccess(() => providerFunc(dateTime), retryInterval);
+        await RetryTaskUntilSuccess(() => publisher.Publish(topic, dateTime.ToString("s"), value, headers), retryInterval);
     }
 
     private static async Task RetryTaskUntilSuccess(Func<Task> func, double retryInterval)
@@ -63,7 +61,7 @@ class Program
     private static async Task<T> RetryTaskUntilSuccess<T>(Func<Task<T>> func, double retryInterval)
     {
         bool success = false;
-        T result = default(T);
+        T? result = default;
         
         while (!success)
         {
@@ -72,12 +70,12 @@ class Program
                 result = await func();
                 success = true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 await Task.Delay(TimeSpan.FromSeconds(retryInterval));
             }
         }
 
-        return result;
+        return result!;
     }
 }

@@ -5,12 +5,12 @@ namespace DataSource;
 
 public class KafkaMessagePublisher : IMessagePublisher
 {
-    private IProducer<string, string> producer;
-    private readonly Configuration configuration;
+    private readonly IProducer<string, string> Producer;
+    private readonly Configuration Configuration;
 
     public KafkaMessagePublisher(Configuration configuration)
     {
-        this.configuration = configuration;
+        this.Configuration = configuration;
 
         var producerConfig = new ProducerConfig
         {
@@ -19,18 +19,18 @@ public class KafkaMessagePublisher : IMessagePublisher
             Partitioner = Partitioner.ConsistentRandom
         };
         
-        producer = new ProducerBuilder<string, string>(producerConfig).Build();
+        Producer = new ProducerBuilder<string, string>(producerConfig).Build();
     }
 
     public async Task Publish(string topic, string key, string value, IDictionary<string, string> headers)
     {
-        Headers msgHeaders = new Headers();
+        var msgHeaders = new Headers();
         foreach (var header in headers)
         {
             msgHeaders.Add(header.Key, Encoding.UTF8.GetBytes(header.Value));
         }
             
-        var deliveryResult = await producer.ProduceAsync(topic, new Message<string, string>
+        var deliveryResult = await Producer.ProduceAsync(topic, new Message<string, string>
         {
             Key = key,
             Headers = msgHeaders,
@@ -40,8 +40,8 @@ public class KafkaMessagePublisher : IMessagePublisher
 
     public void Dispose()
     {
-        Console.WriteLine($"Flushing message producer (max. {configuration.MaxFlushTimeout} seconds).");
-        producer.Flush(TimeSpan.FromSeconds(configuration.MaxFlushTimeout));
-        producer.Dispose();
+        Console.WriteLine($"Flushing message producer (max. {Configuration.MaxFlushTimeout} seconds).");
+        Producer.Flush(TimeSpan.FromSeconds(Configuration.MaxFlushTimeout));
+        Producer.Dispose();
     }
 }

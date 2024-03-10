@@ -36,7 +36,7 @@ services:
       - KAFKA_KRAFT_CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA
     ports:
       - 9292:9292
-      
+ 
   kafka-3:
     image: 'bitnami/kafka:3.6.1'
     container_name: kafka-3
@@ -73,6 +73,7 @@ services:
   kafka-ui:
     image: 'provectuslabs/kafka-ui:latest'
     container_name: kafka-ui
+    depends_on:
       - kafka-1
       - kafka-2
       - kafka-3
@@ -82,4 +83,4 @@ services:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_SCHEMAREGISTRY=http://schema-registry:8081
     ports:
-      - 8080:8080 
+      - 8080:8080

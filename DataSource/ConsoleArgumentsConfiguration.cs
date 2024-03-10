@@ -4,7 +4,7 @@ namespace DataSource;
 
 public class ConsoleArgumentsConfiguration : IConfigurationProvider
 {
-    private Configuration configuration;
+    private readonly Configuration Configuration;
     
     public ConsoleArgumentsConfiguration(string[] args)
     {
@@ -15,20 +15,23 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
 
         if (args.Length == 3)
         {
-            configuration = new Configuration
+            Configuration = new Configuration
             {
                 KafkaAddresses = args[0],
                 AckRequirement = Acks.None,
                 MaxFlushTimeout = 10.0,
                 RetryInterval = 10.0,
-                ForecastTopicName = args[4],
-                ActualWeatherTopicName = args[5]
+                ForecastTopicName = args[1],
+                ActualWeatherTopicName = args[2]
             };
-        } else if (args.Length == 6)
+            return;
+        } 
+        
+        if (args.Length == 6)
         {
             try
             {
-                configuration = new Configuration
+                Configuration = new Configuration
                 {
                     KafkaAddresses = args[0],
                     AckRequirement =
@@ -38,20 +41,19 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
                     ForecastTopicName = args[4],
                     ActualWeatherTopicName = args[5]
                 };
+                return;
             }
             catch (FormatException e)
             {
                 throw new ArgumentException($"Failed to parse program arguments: {e.Message}.");
             }
         }
-        else
-        {
-            throw new ArgumentException("Failed to parse program arguments: Invalid number of provided arguments.");
-        }
+
+        throw new ArgumentException("Failed to parse program arguments: Invalid number of provided arguments.");
     }
 
     public Configuration GetConfiguration()
     {
-        return configuration;
+        return Configuration;
     }
 }
