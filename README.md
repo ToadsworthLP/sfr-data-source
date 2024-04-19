@@ -46,7 +46,21 @@ You can create the needed topics here, however when running DataSource the topic
 }
 ```
 
-### 4. Start DataSource command line app
+### 4. Start DB
+
+To start the DB just use following command
+```
+docker-compose -f .\docker-compose-db.yml up -d
+```
+
+Write and Read DB ip is: `localhost:5432`
+
+There a to replicas of this db acessible on ips `localhost:5433` and `localhost5434`
+
+The replicas are read only copy of the leader DB. This replicas backups the data of the leader DB and prevents data loss if the leader DB fails. Additionally a failing leader DB would not break the feature of the public API as the read only API connects to one or both replicas. We decided that high availability writes where not as important for our use case but it would be possible to modify the config automatically on leader failure to create a new leader
+
+
+### 5. Start DataSource command line app
 
 Required arguments are in following format
 ```
@@ -59,8 +73,8 @@ localhost:9192,localhost:9292,localhost:9392 ack-none 10 10 forecast actual-weat
 
 The app will send one message to both topics and shutdown.
 
-### 5. Start the DataTransformer command line app
-Listens to the incoming weather data and transforms them into Fareinheit via Kafka Streams
+### 6. Start the DataTransformer command line app
+Listens to the incoming weather data on a specific topic and transforms Fahrenheit temperature values into Celsius values via Kafka Streams
 
 ## Choice of number of brokers, partitions and replica
 

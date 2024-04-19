@@ -7,7 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSource", "DataSource\Da
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{7F7FB566-F097-4E2B-B396-8C72B9D009F6}"
 	ProjectSection(SolutionItems) = preProject
+		.env = .env
+		docker-compose-db.yml = docker-compose-db.yml
 		docker-compose.yml = docker-compose.yml
+		init.sql = init.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{411CBF59-FE0D-4A42-923D-FD984173939F}"

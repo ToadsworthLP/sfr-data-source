@@ -1,0 +1,55 @@
+name: db-service
+version: '3'
+services:
+  leader:
+    container_name: leader
+    image: 'bitnami/postgresql:latest'
+    environment:
+      - POSTGRESQL_USERNAME=${DBS_USERNAME}
+      - POSTGRESQL_PASSWORD=${DBS_PASSWORD}
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=${DB_REPLICATOR_USER}
+      - POSTGRESQL_REPLICATION_PASSWORD=${DB_REPLICATOR_PASSWORD}
+    ports:
+      - ${DB_LEADER_EXTERNAL_PORT}:5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - leader-data:/bitnami/postgresql
+  follower-1:
+    container_name: follower-1
+    image: 'bitnami/postgresql:latest'
+    environment:
+      - POSTGRESQL_USERNAME=${DBS_USERNAME}
+      - POSTGRESQL_PASSWORD=${DBS_PASSWORD}
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_MASTER_HOST=${DB_LEADER_HOST}
+      - POSTGRESQL_MASTER_PORT_NUMBER=${DB_LEADER_EXTERNAL_PORT}
+      - POSTGRESQL_REPLICATION_USER=${DB_REPLICATOR_USER}
+      - POSTGRESQL_REPLICATION_PASSWORD=${DB_REPLICATOR_PASSWORD}
+    depends_on:
+      - ${DB_LEADER_HOST}
+    ports:
+      - 5433:5432
+    volumes:
+      - follower-1-data:/bitnami/postgresql
+  follower-2:
+    container_name: follower-2
+    image: 'bitnami/postgresql:latest'
+    environment:
+      - POSTGRESQL_USERNAME=${DBS_USERNAME}
+      - POSTGRESQL_PASSWORD=${DBS_PASSWORD}
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_MASTER_HOST=${DB_LEADER_HOST}
+      - POSTGRESQL_MASTER_PORT_NUMBER=${DB_LEADER_EXTERNAL_PORT}
+      - POSTGRESQL_REPLICATION_USER=${DB_REPLICATOR_USER}
+      - POSTGRESQL_REPLICATION_PASSWORD=${DB_REPLICATOR_PASSWORD}
+    depends_on:
+      - ${DB_LEADER_HOST}
+    ports:
+      - 5434:5432
+    volumes:
+      - follower-2-data:/bitnami/postgresql
+volumes:
+  leader-data:
+  follower-1-data:
+  follower-2-data:  

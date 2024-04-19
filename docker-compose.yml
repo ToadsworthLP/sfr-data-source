@@ -1,4 +1,4 @@
-name: kafka-setup
+name: kafka-service
 version: '3'
 services:
   kafka-1:
