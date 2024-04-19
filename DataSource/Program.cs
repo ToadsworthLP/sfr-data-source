@@ -24,8 +24,7 @@ class Program
             TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, configuration.WeatherApiTopicName)
         );
         
-        IMessagePublisher publisher = new KafkaMessagePublisher(configuration);
-        using (publisher)
+        using (IMessagePublisher publisher = new KafkaMessagePublisher(configuration))
         {
             IWeatherProvider openMeteoWeatherProvider = new OpenMeteoWeatherProvider();
             IWeatherProvider weatherApiWeatherProvider = new WeatherApiWeatherProvider();
