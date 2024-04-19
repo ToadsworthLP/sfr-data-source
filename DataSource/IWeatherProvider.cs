@@ -2,6 +2,6 @@
 
 public interface IWeatherProvider
 {
-    public Task<string> GetActualWeather(DateTime dateTime);
-    public Task<string> GetForecast(DateTime dateTime);
+    public string ProviderName { get; }
+    public Task<IEnumerable<WeatherForecastEntry>> GetForecast();
 }

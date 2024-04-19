@@ -1,4 +1,4 @@
-﻿using Confluent.Kafka;
+using Confluent.Kafka;
 
 namespace DataSource;
 
@@ -21,8 +21,8 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
                 AckRequirement = Acks.None,
                 MaxFlushTimeout = 10.0,
                 RetryInterval = 10.0,
-                ForecastTopicName = args[1],
-                ActualWeatherTopicName = args[2]
+                OpenMeteoTopicName = args[1],
+                WeatherApiTopicName = args[2]
             };
             return;
         } 
@@ -38,8 +38,8 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
                         args[1] == "ack-all" ? Acks.All : args[1] == "ack-leader" ? Acks.Leader : Acks.None,
                     MaxFlushTimeout = double.Parse(args[2]),
                     RetryInterval = double.Parse(args[3]),
-                    ForecastTopicName = args[4],
-                    ActualWeatherTopicName = args[5]
+                    OpenMeteoTopicName = args[4],
+                    WeatherApiTopicName = args[5]
                 };
                 return;
             }

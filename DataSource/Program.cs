@@ -1,4 +1,4 @@
-﻿namespace DataSource;
+namespace DataSource;
 
 class Program
 {
@@ -12,31 +12,42 @@ class Program
         catch (ArgumentException)
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... forecast-topic-name actual-weather-topic-name");
-            Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... ack-all|ack-none|ack-leader max-flush-timeout-seconds retry-interval forecast-topic-name actual-weather-topic-name");
+            Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... openmeteo-topic-name weatherapi-topic-name");
+            Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... ack-all|ack-none|ack-leader max-flush-timeout-seconds retry-interval-seconds open-meteo-topic-name weatherapi-topic-name");
             return;
         }
 
-        var config = configurationProvider.GetConfiguration();
+        var configuration = configurationProvider.GetConfiguration();
 
         Task.WaitAll(
-            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ActualWeatherTopicName),
-            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ActualWeatherTopicName + "-fareinheit"),
-            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ForecastTopicName),
-            TopicCreator.CreateTopicAsync(config.KafkaAddresses, config.ForecastTopicName + "-fareinheit"));
-
-        IWeatherProvider weatherProvider = new DummyWeatherProvider();
-        using IMessagePublisher publisher = new KafkaMessagePublisher(config);
-        Task.WaitAll(
-            SendWeatherMessage(weatherProvider.GetActualWeather, publisher, DateTime.Now, config.ActualWeatherTopicName, config.RetryInterval, "dummy-provider"),
-            SendWeatherMessage(weatherProvider.GetForecast, publisher, DateTime.Now + TimeSpan.FromDays(1), config.ForecastTopicName, config.RetryInterval, "dummy-provider"));
+            TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, configuration.OpenMeteoTopicName),
+            TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, configuration.WeatherApiTopicName)
+        );
+        
+        IMessagePublisher publisher = new KafkaMessagePublisher(configuration);
+        using (publisher)
+        {
+            IWeatherProvider openMeteoWeatherProvider = new OpenMeteoWeatherProvider();
+            IWeatherProvider weatherApiWeatherProvider = new WeatherApiWeatherProvider();
+            
+            Task.WaitAll(
+                SendWeatherMessage(() => openMeteoWeatherProvider.GetForecast(), publisher, configuration.OpenMeteoTopicName, openMeteoWeatherProvider.ProviderName, configuration),
+                SendWeatherMessage(() => weatherApiWeatherProvider.GetForecast(), publisher, configuration.WeatherApiTopicName, weatherApiWeatherProvider.ProviderName, configuration)
+            );
+        }
     }
 
-    private static async Task SendWeatherMessage(Func<DateTime, Task<string>> providerFunc, IMessagePublisher publisher, DateTime dateTime, string topic, double retryInterval, string source)
+    private static async Task SendWeatherMessage(Func<Task<IEnumerable<WeatherForecastEntry>>> providerFunc, IMessagePublisher publisher, string topic, string source, Configuration configuration)
     {
-        var headers = new Dictionary<string, string> { { "source", source } };
-        string value = await RetryTaskUntilSuccess(() => providerFunc(dateTime), retryInterval);
-        await RetryTaskUntilSuccess(() => publisher.Publish(topic, dateTime.ToString("s"), value, headers), retryInterval);
+        IDictionary<string, string> headers = new Dictionary<string, string> { { "source", source } };
+        IEnumerable<WeatherForecastEntry> value = await RetryTaskUntilSuccess(providerFunc, configuration.RetryInterval);
+
+        foreach (WeatherForecastEntry entry in value)
+        {
+            string key = entry.Timestamp.ToString("s");
+            await RetryTaskUntilSuccess(() => publisher.Publish(topic, key, entry.ToString(), headers), configuration.RetryInterval);
+            Console.WriteLine($"Successfully sent message with key {key} to topic {topic}.");
+        }
     }
 
     private static async Task RetryTaskUntilSuccess(Func<Task> func, double retryInterval)
