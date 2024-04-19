@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS weather_data (
     timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     provider SMALLINT NOT NULL,
     temperature DOUBLE PRECISION NOT NULL,
-    temperature_unit VARCHAR(10) NOT NULL,
+    temperature_unit SMALLINT NOT NULL,
     pressure DOUBLE PRECISION NOT NULL,
-    pressure_unit VARCHAR(10) NOT NULL
+    pressure_unit SMALLINT NOT NULL
 );
