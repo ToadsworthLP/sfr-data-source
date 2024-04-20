@@ -20,13 +20,18 @@ public class WeatherApiWeatherProvider : IWeatherProvider
         List<WeatherForecastEntry> entries = new List<WeatherForecastEntry>();
         foreach (WeatherApiResponse.Hour hour in responseBody.forecast.forecastday[0].hour)
         {
-            entries.Add(new WeatherForecastEntry(
+            WeatherForecastEntry entry = new WeatherForecastEntry(
                 DateTime.Parse(hour.time, CultureInfo.InvariantCulture),
                 hour.temp_f,
                 "f",
                 hour.pressure_mb,
                 "mb"
-            ));
+            );
+
+            entry.Timestamp = DateTime.SpecifyKind(entry.Timestamp, DateTimeKind.Local);
+            entry.Timestamp = entry.Timestamp.ToUniversalTime();
+            
+            entries.Add(entry);
         }
             
         return entries;

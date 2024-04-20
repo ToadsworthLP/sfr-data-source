@@ -5,6 +5,7 @@ namespace DataIngest;
 public class WeatherMessage
 {
     public DateTime timestamp { get; set; }
+    public string provider { get; set; }
     public double temperature { get; set; }
     public string temperature_unit { get; set; }
     public double pressure { get; set; }

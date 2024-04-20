@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using Confluent.Kafka;
-
-namespace DataIngest;
+﻿namespace DataIngest;
 
 class Program
 {
@@ -15,7 +12,7 @@ class Program
         catch (ArgumentException)
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("DataIngest.dll broker-ip:port,broker-ip:port,... group-id open-meteo-topic-name weatherapi-topic-name");
+            Console.WriteLine("DataIngest.dll broker-ip:port,broker-ip:port,... group-id open-meteo-topic-name weatherapi-topic-name db-connection-string retry-interval");
             return;
         }
         
@@ -26,16 +23,11 @@ class Program
             e.Cancel = true;
             cancellationTokenSource.Cancel();
         };
-        
-        using (IMessageConsumer consumer = new KafkaMessageConsumer(configuration))
-        {
-            consumer.Subscribe(new []{configuration.OpenMeteoTopicName, configuration.WeatherApiTopicName}, HandleMessage, cancellationTokenSource.Token);
-        }
-    }
 
-    private static void HandleMessage(Message<string, string> message)
-    {
-        WeatherMessage weatherMessage = JsonSerializer.Deserialize<WeatherMessage>(message.Value);
-        Console.WriteLine(weatherMessage);
+        using WeatherDbContext db = new WeatherDbContext(configuration.DbConnectionString);
+        using IMessageConsumer consumer = new KafkaMessageConsumer(configuration);
+        
+        IMessageHandler handler = new MessageHandler(db, configuration, cancellationTokenSource.Token);
+        consumer.Subscribe(new []{configuration.OpenMeteoTopicName, configuration.WeatherApiTopicName}, handler.HandleMessage, cancellationTokenSource.Token);
     }
 }

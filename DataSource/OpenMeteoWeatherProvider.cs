@@ -23,14 +23,19 @@ public class OpenMeteoWeatherProvider : IWeatherProvider
             string timestamp = responseBody.hourly.time[i];
             double temperature = responseBody.hourly.temperature_2m[i];
             double pressure = responseBody.hourly.pressure_msl[i];
-            
-            entries.Add(new WeatherForecastEntry(
+
+            WeatherForecastEntry entry = new WeatherForecastEntry(
                 DateTime.Parse(timestamp, CultureInfo.InvariantCulture),
                 temperature,
                 "c",
                 pressure,
                 "mb"
-            ));
+            );
+            
+            entry.Timestamp = DateTime.SpecifyKind(entry.Timestamp, DateTimeKind.Local);
+            entry.Timestamp = entry.Timestamp.ToUniversalTime();
+            
+            entries.Add(entry);
         }
 
         return entries;

@@ -22,23 +22,24 @@ public class KafkaMessageConsumer : IMessageConsumer
         Consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
     }
 
-    public void Subscribe(IEnumerable<string> topics, Action<Message<string, string>> handler, CancellationToken cancellationToken)
+    public void Subscribe(IEnumerable<string> topics, Action<ConsumeResult<string, string>> handler, CancellationToken cancellationToken)
     {
         Consumer.Subscribe(topics);
         
         try {
             while (true) {
                 var result = Consumer.Consume(cancellationToken);
-                Console.WriteLine($"Successfully received message with key {result.Message.Key} from topic {result.Topic}.");
+                Console.WriteLine($"Received message with key {result.Message.Key} from topic {result.Topic}.");
 
                 try
                 {
-                    handler(result.Message);
+                    handler(result);
                     Consumer.Commit(result);
+                    Console.WriteLine($"Successfully handled message with key {result.Message.Key} from topic {result.Topic}.");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"An error occured when handling message with key {result.Message.Key}: {e}");
+                    Console.WriteLine($"An error occured when handling message with key {result.Message.Key} in topic {result.Topic}: {e}");
                 }
             }
         }

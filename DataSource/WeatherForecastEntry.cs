@@ -4,11 +4,11 @@ namespace DataSource;
 
 public class WeatherForecastEntry
 {
-    public DateTime Timestamp { get; init; }
-    public double Temperature { get; init; }
-    public string TemperatureUnit { get; init; }
-    public double Pressure { get; init; }
-    public string PressureUnit { get; init; }
+    public DateTime Timestamp { get; set; }
+    public double Temperature { get; set; }
+    public string TemperatureUnit { get; set; }
+    public double Pressure { get; set; }
+    public string PressureUnit { get; set; }
 
     private static NumberFormatInfo numberFormatInfo;
 

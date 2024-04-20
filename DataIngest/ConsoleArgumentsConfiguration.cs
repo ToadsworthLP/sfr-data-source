@@ -13,7 +13,7 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
             throw new ArgumentException("Failed to parse program arguments: No arguments provided.");
         }
 
-        if (args.Length == 4)
+        if (args.Length == 6)
         {
             try
             {
@@ -22,7 +22,9 @@ public class ConsoleArgumentsConfiguration : IConfigurationProvider
                     KafkaAddresses = args[0],
                     GroupId = args[1],
                     OpenMeteoTopicName = args[2],
-                    WeatherApiTopicName = args[3]
+                    WeatherApiTopicName = args[3],
+                    DbConnectionString = args[4],
+                    RetryInterval = double.Parse(args[5])
                 };
                 return;
             }
