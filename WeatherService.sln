@@ -18,7 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataIngest", "DataIngest\DataIngest.csproj", "{59246ED9-B410-4A92-952F-505B6F4C6386}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataIngest", "DataIngest\DataIngest.csproj", "{59246ED9-B410-4A92-952F-505B6F4C6386}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiService", "ApiService\ApiService.csproj", "{286DEB59-1C94-4F20-8E87-B46CD1F81DA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,10 @@ Global
 		{59246ED9-B410-4A92-952F-505B6F4C6386}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59246ED9-B410-4A92-952F-505B6F4C6386}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59246ED9-B410-4A92-952F-505B6F4C6386}.Release|Any CPU.Build.0 = Release|Any CPU
+		{286DEB59-1C94-4F20-8E87-B46CD1F81DA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{286DEB59-1C94-4F20-8E87-B46CD1F81DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{286DEB59-1C94-4F20-8E87-B46CD1F81DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286DEB59-1C94-4F20-8E87-B46CD1F81DA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
