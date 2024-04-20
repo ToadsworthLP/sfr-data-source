@@ -1,4 +1,5 @@
 
+using ApiService.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiService
@@ -17,8 +18,12 @@ namespace ApiService
             builder.Services.AddSwaggerGen();
 
             // For EntityFramework
-            builder.Services.AddDbContext<AppDbContext>(
+            builder.Services.AddDbContext<PrimaryDbContext>(
                 options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // For EntityFramework
+            builder.Services.AddDbContext<SecondaryDbContext>(
+                options => options.UseNpgsql(builder.Configuration.GetConnectionString("BackupConnection")));
 
             var app = builder.Build();
 

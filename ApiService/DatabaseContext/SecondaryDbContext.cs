@@ -1,11 +1,11 @@
 ﻿using ApiService.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApiService
+namespace ApiService.DatabaseContext
 {
-    public class AppDbContext : DbContext
+    public class SecondaryDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+        public SecondaryDbContext(DbContextOptions<SecondaryDbContext> options)
         : base(options)
         { }
         public DbSet<WeatherEntry> WeatherEntries { get; set; }
