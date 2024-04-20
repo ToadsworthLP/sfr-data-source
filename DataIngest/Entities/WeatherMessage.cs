@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace DataIngest;
+namespace DataIngest.Entities;
 
 public class WeatherMessage
 {
@@ -10,7 +10,7 @@ public class WeatherMessage
     public string temperature_unit { get; set; }
     public double pressure { get; set; }
     public string pressure_unit { get; set; }
-    
+
     private static NumberFormatInfo numberFormatInfo;
 
     static WeatherMessage()
@@ -21,7 +21,7 @@ public class WeatherMessage
             NumberGroupSeparator = ""
         };
     }
-    
+
     public override string ToString()
     {
         return $"{{ \"timestamp\": \"{timestamp:s}\", \"temperature\": {temperature.ToString(numberFormatInfo)}, \"temperature_unit\": \"{temperature_unit}\", \"pressure\": {pressure.ToString(numberFormatInfo)}, \"pressure_unit\": \"{pressure_unit}\" }}";

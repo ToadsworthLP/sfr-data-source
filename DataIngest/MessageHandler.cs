@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
+using DataIngest.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace DataIngest;
 
@@ -20,7 +21,7 @@ public class MessageHandler : IMessageHandler
     public void HandleMessage(ConsumeResult<string, string> result)
     {
         WeatherMessage weatherMessage = JsonSerializer.Deserialize<WeatherMessage>(result.Message.Value);
-        
+
         WeatherEntry newEntry = new WeatherEntry()
         {
             Timestamp = weatherMessage.timestamp,
@@ -50,7 +51,7 @@ public class MessageHandler : IMessageHandler
     {
         bool success = false;
         T result = default(T);
-        
+
         while (!success)
         {
             try
@@ -62,8 +63,8 @@ public class MessageHandler : IMessageHandler
             {
                 Console.WriteLine($"Failed to access database, retrying in {configuration.RetryInterval} seconds: {e}");
                 await Task.Delay(TimeSpan.FromSeconds(configuration.RetryInterval), cancellationToken);
-                
-                if(cancellationToken.IsCancellationRequested) break;
+
+                if (cancellationToken.IsCancellationRequested) break;
             }
         }
 

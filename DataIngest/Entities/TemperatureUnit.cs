@@ -1,7 +1,7 @@
-﻿namespace DataIngest;
+﻿namespace DataIngest.Entities;
 
 public enum TemperatureUnit
 {
-    Celsius = 0, 
+    Celsius = 0,
     Fahrenheit = 1
 }

@@ -1,4 +1,4 @@
-﻿namespace DataIngest;
+﻿namespace DataIngest.Entities;
 
 public enum PressureUnit
 {

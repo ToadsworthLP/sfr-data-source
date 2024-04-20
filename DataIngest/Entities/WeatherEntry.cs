@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DataIngest;
+namespace DataIngest.Entities;
 
 public class WeatherEntry
 {
