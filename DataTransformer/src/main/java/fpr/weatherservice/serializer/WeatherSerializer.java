@@ -11,6 +11,7 @@ public class WeatherSerializer implements Serializer<Weather> {
     @Override
     public byte[] serialize(String topic, Weather data) {
         try {
+
             if (data == null) {
                 System.err.println("Can not serialize null Weather!");
                 return null;

@@ -1,14 +1,12 @@
 package fpr.weatherservice;
-import fpr.weatherservice.serializer.WeatherDeserializer;
-import fpr.weatherservice.serializer.WeatherSerializer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 
-import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.Produced;
 
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 public class Main {
@@ -18,10 +16,14 @@ public class Main {
 
         builder.stream("actual-weather", Consumed.with(Serdes.String(), KafkaHelper.weatherSerde))
             .mapValues(value -> {
-                value.temperature = value.temperature * 1.8f + 32;
+                if (Objects.equals(value.temperature_unit, "f")) {
+                    var temp = (value.temperature - 32) / 1.8f;
+                    value.temperature = Math.round(temp * 100) / 100.0;
+                    value.temperature_unit = "c";
+                }
                 return value;
             })
-            .to("actual-weather-fareinheit", Produced.with(Serdes.String(), KafkaHelper.weatherSerde));
+            .to("actual-weather-unified", Produced.with(Serdes.String(), KafkaHelper.weatherSerde));
 
 
         final var topology = builder.build();
