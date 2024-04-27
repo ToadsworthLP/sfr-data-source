@@ -12,7 +12,7 @@ class Program
         catch (ArgumentException)
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("DataIngest.dll broker-ip:port,broker-ip:port,... group-id open-meteo-topic-name weatherapi-topic-name db-connection-string retry-interval");
+            Console.WriteLine("DataIngest.dll broker-ip:port,broker-ip:port,... schema-registry-ip:port,schema-registry-ip:port,... group-id open-meteo-topic-name weatherapi-topic-name db-connection-string retry-interval");
             return;
         }
         

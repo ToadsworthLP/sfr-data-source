@@ -1,10 +1,15 @@
 ﻿using Confluent.Kafka;
+using Confluent.Kafka.SyncOverAsync;
+using Confluent.SchemaRegistry;
+using Confluent.SchemaRegistry.Serdes;
+using DataIngest.Entities;
 
 namespace DataIngest;
 
 public class KafkaMessageConsumer : IMessageConsumer
 {
-    private readonly IConsumer<string, string> Consumer;
+    private readonly IConsumer<string, WeatherMessage> Consumer;
+    private readonly ISchemaRegistryClient SchemaRegistryClient;
     private readonly Configuration Configuration;
 
     public KafkaMessageConsumer(Configuration configuration)
@@ -18,11 +23,20 @@ public class KafkaMessageConsumer : IMessageConsumer
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = false
         };
+        
+        var schemaRegistryConfig = new SchemaRegistryConfig
+        {
+            Url = configuration.SchemaRegistryAddresses
+        };
+        
+        SchemaRegistryClient = new CachedSchemaRegistryClient(schemaRegistryConfig);
 
-        Consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
+        Consumer = new ConsumerBuilder<string, WeatherMessage>(consumerConfig)
+            .SetValueDeserializer(new AvroDeserializer<WeatherMessage>(SchemaRegistryClient).AsSyncOverAsync())
+            .Build();
     }
 
-    public void Subscribe(IEnumerable<string> topics, Action<ConsumeResult<string, string>> handler, CancellationToken cancellationToken)
+    public void Subscribe(IEnumerable<string> topics, Action<ConsumeResult<string, WeatherMessage>> handler, CancellationToken cancellationToken)
     {
         Consumer.Subscribe(topics);
         

@@ -1,4 +1,4 @@
-﻿using Confluent.Kafka;
+using Confluent.Kafka;
 using DataIngest.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -18,13 +18,13 @@ public class MessageHandler : IMessageHandler
         this.cancellationToken = cancellationToken;
     }
 
-    public void HandleMessage(ConsumeResult<string, string> result)
+    public void HandleMessage(ConsumeResult<string, WeatherMessage> result)
     {
-        WeatherMessage weatherMessage = JsonSerializer.Deserialize<WeatherMessage>(result.Message.Value);
-
+        WeatherMessage weatherMessage = result.Message.Value;
+        
         WeatherEntry newEntry = new WeatherEntry()
         {
-            Timestamp = weatherMessage.timestamp,
+            Timestamp = DateTime.Parse(weatherMessage.timestamp),
             Provider = result.Topic == "openmeteo" ? WeatherDataProvider.OpenMeteo : WeatherDataProvider.WeatherApi,
             Temperature = weatherMessage.temperature,
             TemperatureUnit = weatherMessage.temperature_unit == "f" ? TemperatureUnit.Fahrenheit : TemperatureUnit.Celsius,

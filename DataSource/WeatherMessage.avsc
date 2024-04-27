@@ -1,0 +1,33 @@
+﻿{
+  "type": "record",
+  "name": "WeatherMessage",
+  "doc": "This record contains a single timestamped weather forecast entry",
+  "namespace": "WeatherService",
+  "fields": [
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "Timestamp of the entry"
+    },
+    {
+      "name": "temperature",
+      "type": "double",
+      "doc": "The temperature in the unit specified by temperature_unit"
+    },
+    {
+      "name": "temperature_unit",
+      "type": "string",
+      "doc": "The unit used for the temperature value"
+    },
+    {
+      "name": "pressure",
+      "type": "double",
+      "doc": "The pressure in the unit specified by pressure_unit"
+    },
+    {
+      "name": "pressure_unit",
+      "type": "string",
+      "doc": "The unit used for the pressure value"
+    }
+  ]
+}

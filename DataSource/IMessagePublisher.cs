@@ -2,5 +2,5 @@
 
 public interface IMessagePublisher : IDisposable
 {
-    Task Publish(string topic, string key, string value, IDictionary<string, string> headers);
+    Task Publish(string topic, string key, WeatherMessage message, IDictionary<string, string> headers);
 }

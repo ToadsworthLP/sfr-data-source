@@ -12,8 +12,7 @@ class Program
         catch (ArgumentException)
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... openmeteo-topic-name weatherapi-topic-name");
-            Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... ack-all|ack-none|ack-leader max-flush-timeout-seconds retry-interval-seconds open-meteo-topic-name weatherapi-topic-name");
+            Console.WriteLine("DataSource.dll broker-ip:port,broker-ip:port,... schema-registry-ip:port,schema-registry-ip:port,... ack-all|ack-none|ack-leader max-flush-timeout-seconds retry-interval-seconds open-meteo-topic-name weatherapi-topic-name");
             return;
         }
 
@@ -44,7 +43,16 @@ class Program
         foreach (WeatherForecastEntry entry in value)
         {
             string key = entry.Timestamp.ToString("s");
-            await RetryTaskUntilSuccess(() => publisher.Publish(topic, key, entry.ToString(), headers), configuration.RetryInterval);
+            WeatherMessage message = new WeatherMessage()
+            {
+                timestamp = entry.Timestamp.ToString("s"),
+                temperature = entry.Temperature,
+                temperature_unit = entry.TemperatureUnit,
+                pressure = entry.Pressure,
+                pressure_unit = entry.PressureUnit
+            };
+            
+            await RetryTaskUntilSuccess(() => publisher.Publish(topic, key, message, headers), configuration.RetryInterval);
             Console.WriteLine($"Successfully sent message with key {key} to topic {topic}.");
         }
     }

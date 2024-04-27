@@ -16,35 +16,7 @@ You can create the needed topics here, however when running DataSource the topic
 
 ### 3. Create Schemas
 
-1. Go to http://localhost:8080/ui/clusters/local/schemas
-2. Click on `Create Schema`
-2. Give the Schema a subject ex: `weather-forecast-day`
-3. Create a Schema in AVRO format ex:
-```JSON
-{
-  "type": "record",
-  "name": "forecastWeatherDay",
-  "doc": "This record contains a weather forecast day",
-  "namespace": "fhtw.sfr",
-  "fields": [
-    {
-      "name": "day",
-      "type": "string",
-      "doc": "Day string in format DD.MM.YYYY"
-    },
-    {
-      "name": "minTemp",
-      "type": "float",
-      "doc": "Minimum temperature of the day in C"
-    },
-    {
-      "name": "maxTemp",
-      "type": "float",
-      "doc": "Maximum temperature of the day in C"
-    }
-  ]
-}
-```
+The schemas in AVRO format will be created automatically by DataSource and used by DataIngest.
 
 ### 4. Start DB
 
@@ -64,17 +36,31 @@ The replicas are read only copy of the leader DB. This replicas backups the data
 
 Required arguments are in following format
 ```
-broker-ip:port,broker-ip:port,... ack-all|ack-none|ack-leader max-flush-timeout-seconds retry-interval forecast-topic-name actual-weather-topic-name
+DataSource.dll broker-ip:port,broker-ip:port,... schema-registry-ip:port,schema-registry-ip:port,... ack-all|ack-none|ack-leader max-flush-timeout-seconds retry-interval-seconds open-meteo-topic-name weatherapi-topic-name
 ```
 ex:
 ```
-localhost:9192,localhost:9292,localhost:9392 ack-none 10 10 forecast actual-weather
+localhost:9192,localhost:9292,localhost:9392 localhost:8081 ack-all 10 10 openmeteo weatherapi
 ```
 
-The app will send one message to both topics and shutdown.
+The app will send messages containing weather forecast data for each hour of the day from each of the two weather APIs to Kafka.
+It is designed to run once per day using an external scheduling mechanism (e.g. Windows Task Scheduler, cron job). Once all messages were sent successfully, the application terminates.
 
 ### 6. Start the DataTransformer command line app
 Listens to the incoming weather data on a specific topic and transforms Fahrenheit temperature values into Celsius values via Kafka Streams
+
+### 5. Start DataIngest command line app
+
+Required arguments are in following format
+```
+DataIngest.dll broker-ip:port,broker-ip:port,... schema-registry-ip:port,schema-registry-ip:port,... group-id open-meteo-topic-name weatherapi-topic-name db-connection-string retry-interval
+```
+ex:
+```
+localhost:9192,localhost:9292,localhost:9392 localhost:8081 ingest openmeteo weatherapi "Host=localhost:5432; Database=postgres; Username=postgres; Password=password" 10
+```
+
+The app will receive the messages sent by DataSource from Kafka and persist their contents into the database.
 
 ## Choice of number of brokers, partitions and replica
 

@@ -5,7 +5,7 @@
 //    is regenerated
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace DataIngest.Entities
+namespace DataSource
 {
 	using System;
 	using System.Collections.Generic;
