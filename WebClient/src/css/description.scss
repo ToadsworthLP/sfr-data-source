@@ -1,0 +1,37 @@
+main {
+  .headline {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .temperature-logo {
+    height: 50px;
+    width: auto;
+  }
+
+  .created-by {
+    font-weight: normal;
+  }
+
+  .description {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .text {
+    width: min(700px, 80vw);
+    border: 2px solid grey;
+    margin: auto;
+    padding: 10px;
+    background-color: rgb(50, 50, 50);
+    align-items: start;
+
+    h4 {
+      margin-top: 10px;
+    }
+
+    ul {
+      list-style-position: inside;
+    }
+  }
+}
