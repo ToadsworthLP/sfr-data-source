@@ -6,10 +6,10 @@ import {creators, technologies} from "@/app/Home/landingData";
 
 export default function Landing() {
     return (
-        <div>
+        <div className={"landing-container"}>
             <h1 className="center headline">
                 <Image className="temperature-logo" src={temperatureImage} alt={""}/>
-                Temperature for SFR
+                Tem<wbr/>per<wbr/>a<wbr/>ture for SFR
             </h1>
             <h4 className="center created-by">by {creators.join(", ")}</h4>
 

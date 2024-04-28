@@ -7,11 +7,12 @@ export const creators = [
 export const technologies = [
     "C#",
     "Java",
-    "HTML",
-    "Syntactically Awesome Style Sheets",
-    "TypeScript",
     "PostgresSQL",
     "Apache Kafka",
     "Apache Kafka Streams",
+    "Confluent Schema Registry",
+    "HTML",
+    "Syntactically Awesome Style Sheets",
+    "TypeScript",
     "React & Next.js"
 ]

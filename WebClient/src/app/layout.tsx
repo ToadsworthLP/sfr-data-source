@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import "../css/globals.scss";
-import styles from "../css/page.module.scss";
 import { Inter } from "next/font/google";
 import React from "react";
 import NavigationBar from "@/app/NavigationBar/navigationBar";
@@ -9,14 +8,14 @@ import NavigationBar from "@/app/NavigationBar/navigationBar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Tempetature",
+    title: "Temperature",
     description: "App for SFR",
 };
 
 const RootLayout = ({ children }: Readonly<{  children: React.ReactNode; }>) => (
     <html lang="en">
         <body className={inter.className}>
-            <main className={styles.main}>
+            <main>
                 <NavigationBar />
                 {children}
             </main>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DataIngest": {
+      "commandName": "Project",
+      "commandLineArgs": "localhost:9192,localhost:9292,localhost:9392 localhost:8081 ingest openmeteo weatherapi \"Host=localhost:5432; Database=postgres; Username=postgres; Password=password\" 10"
+    }
+  }
+}
