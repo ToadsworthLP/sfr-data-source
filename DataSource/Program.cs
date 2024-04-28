@@ -20,7 +20,9 @@ class Program
 
         Task.WaitAll(
             TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, configuration.OpenMeteoTopicName),
-            TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, configuration.WeatherApiTopicName)
+            TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, configuration.WeatherApiTopicName),
+            TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, $"{configuration.OpenMeteoTopicName}-raw"),
+            TopicCreator.CreateTopicAsync(configuration.KafkaAddresses, $"{configuration.WeatherApiTopicName}-raw")
         );
         
         using (IMessagePublisher publisher = new KafkaMessagePublisher(configuration))
@@ -29,8 +31,8 @@ class Program
             IWeatherProvider weatherApiWeatherProvider = new WeatherApiWeatherProvider();
             
             Task.WaitAll(
-                SendWeatherMessage(() => openMeteoWeatherProvider.GetForecast(), publisher, configuration.OpenMeteoTopicName, openMeteoWeatherProvider.ProviderName, configuration),
-                SendWeatherMessage(() => weatherApiWeatherProvider.GetForecast(), publisher, configuration.WeatherApiTopicName, weatherApiWeatherProvider.ProviderName, configuration)
+                SendWeatherMessage(() => openMeteoWeatherProvider.GetForecast(), publisher, $"{configuration.OpenMeteoTopicName}-raw", openMeteoWeatherProvider.ProviderName, configuration),
+                SendWeatherMessage(() => weatherApiWeatherProvider.GetForecast(), publisher, $"{configuration.WeatherApiTopicName}-raw", weatherApiWeatherProvider.ProviderName, configuration)
             );
         }
     }
