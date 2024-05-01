@@ -10,11 +10,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: ./src/ApiService/Dockerfile
+          - dockerfile: ApiService
             image: se23m015/api-service
-          - dockerfile: ./src/DataIngest/Dockerfile
+          - dockerfile: DataIngest
             image: se23m015/data-ingest
-          - dockerfile: ./src/DataTransformer/Dockerfile
+          - dockerfile: DataTransformer
             image: se23m015/data-transformer
     permissions:
       contents: read
