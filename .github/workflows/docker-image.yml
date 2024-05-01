@@ -10,11 +10,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: ApiService
+          - dockerfile: ./ApiService/Dockerfile
             image: se23m015/api-service
-          - dockerfile: DataIngest
+          - dockerfile: ./DataIngest/Dockerfile
             image: se23m015/data-ingest
-          - dockerfile: DataTransformer
+          - dockerfile: ./DataTransformer/Dockerfile
             image: se23m015/data-transformer
     permissions:
       contents: read
@@ -39,7 +39,7 @@ jobs:
         - name: Build and push Docker images
           uses: docker/build-push-action@v4
           with:
-            context: .
+            context: ./
             file: ${{ matrix.dockerfile }}
             push: true
             tags: ${{ steps.meta.outputs.tags }}
