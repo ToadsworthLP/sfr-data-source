@@ -12,8 +12,6 @@ jobs:
         include:
           - dockerfile: ./ApiService/Dockerfile
             image: se23m015/api-service
-          - dockerfile: ./DataIngest/Dockerfile
-            image: se23m015/data-ingest
     permissions:
       contents: read
       packages: write
