@@ -1,0 +1,46 @@
+name: Build and Push Docker images
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - dockerfile: ./ApiService/Dockerfile
+            image: ${{secrets.DOCKER_USERNAME}}/api-service
+          - dockerfile: ./DataIngest/Dockerfile
+            image: ${{secrets.DOCKER_USERNAME}}/username/data-ingest
+          - dockerfile: ./DataTransformer/Dockerfile
+            image: ${{secrets.DOCKER_USERNAME}}/username/data-transformer
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+          
+        - name: Login to Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+        - name: Extract metadata (tags, labels) for Docker
+          id: meta
+          uses: docker/metadata-action@v4
+          with:
+            images: ${{ matrix.image }}
+
+        - name: Build and push Docker images
+          uses: docker/build-push-action@v4
+          with:
+            context: .
+            file: ${{ matrix.dockerfile }}
+            push: true
+            tags: ${{ steps.meta.outputs.tags }}
+            labels: ${{ steps.meta.outputs.labels }}
