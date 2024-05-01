@@ -11,11 +11,11 @@ jobs:
       matrix:
         include:
           - dockerfile: ./ApiService/Dockerfile
-            image: ${{secrets.DOCKER_USERNAME}}/api-service
+            image: se23m015/api-service
           - dockerfile: ./DataIngest/Dockerfile
-            image: ${{secrets.DOCKER_USERNAME}}/username/data-ingest
+            image: se23m015/data-ingest
           - dockerfile: ./DataTransformer/Dockerfile
-            image: ${{secrets.DOCKER_USERNAME}}/username/data-transformer
+            image: se23m015/data-transformer
     permissions:
       contents: read
       packages: write
