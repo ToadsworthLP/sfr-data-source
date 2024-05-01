@@ -1,0 +1,6 @@
+version: '3'
+services:
+  data-transform:
+    image: "productive-dev/data-transformer:latest"
+    container_name: data-transform
+    network_mode: "host"

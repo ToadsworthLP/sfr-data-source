@@ -1,0 +1,5 @@
+﻿services:
+    data-source:
+        image: "productive-dev/data-source:latest"
+        container_name: data-source
+        network_mode: "host"

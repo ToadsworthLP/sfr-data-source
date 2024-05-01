@@ -1,0 +1,5 @@
+﻿services:
+    api-service:
+        image: "productive-dev/api-service:latest"
+        container_name: api-service
+        network_mode: "host"

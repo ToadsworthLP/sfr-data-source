@@ -47,9 +47,19 @@ The app will send messages containing weather forecast data for each hour of the
 It is designed to run once per day using an external scheduling mechanism (e.g. Windows Task Scheduler, cron job). Once all messages were sent successfully, the application terminates.
 
 ### 6. Start the DataTransformer command line app
-Listens to the incoming weather data on a specific topic and transforms Fahrenheit temperature values into Celsius values via Kafka Streams
+Listens to the incoming weather data on a specific topic and transforms Fahrenheit temperature values into Celsius values via Kafka Streams  
 
-### 5. Start DataIngest command line app
+Required arguments are in the following format
+```
+broker-ip:port,broker-ip:port,... schema-registry-ip:port,schema-registry-ip:port... open-meteo-topic-name weatherapi-topic-name
+```
+ex:
+```
+http://127.0.0.1:9192,http://127.0.0.1:9292,http://127.0.0.1:9392 http://127.0.0.1:8081 openmeteo weatherapi
+```
+
+
+### 7. Start DataIngest command line app
 
 Required arguments are in following format
 ```
@@ -61,6 +71,12 @@ localhost:9192,localhost:9292,localhost:9392 localhost:8081 ingest openmeteo wea
 ```
 
 The app will receive the messages sent by DataSource from Kafka and persist their contents into the database.
+
+### 8. Start ApiService
+Run the ApiService container. No args needed.
+
+### 9. Start WebClient
+Run the webclient. No args needed.
 
 ## Choice of number of brokers, partitions and replica
 

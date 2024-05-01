@@ -1,0 +1,5 @@
+﻿services:
+    data-source:
+        image: "productive-dev/data-ingest:latest"
+        container_name: data-ingest
+        network_mode: "host"
