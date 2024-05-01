@@ -14,8 +14,6 @@ jobs:
             image: se23m015/api-service
           - dockerfile: ./DataIngest/Dockerfile
             image: se23m015/data-ingest
-          - dockerfile: ./DataTransformer/Dockerfile
-            image: se23m015/data-transformer
     permissions:
       contents: read
       packages: write
