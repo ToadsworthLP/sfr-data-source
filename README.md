@@ -1,5 +1,7 @@
 # FHTW - SFR
 
+test
+
 ## Setup Kafka
 
 ### 1. Run docker-compose
