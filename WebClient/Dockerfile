@@ -1,4 +1,4 @@
-FROM node:21.7.1
+FROM node:latest
 
 ENV NODE_ENV=development
 
