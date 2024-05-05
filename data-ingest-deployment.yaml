@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-ingest-service
+  namespace: weatherdata
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: data-ingest-service
+  template:
+    metadata:
+      labels:
+        app: data-ingest-service
+    spec:
+      containers:
+      - name: data-ingest-service
+        image: se23m015/data-ingest-service:main
